@@ -1,8 +1,8 @@
 # -*- mode: ruby -*-
 # vi:set ft=ruby sw=2 ts=2 sts=2:
 
-# Define the number of master and worker nodes
-# If this number is changed, remember to update setup-hosts.sh script with the new hosts IP details in /etc/hosts of each VM.
+# Definición el número de master y worker nodes
+# Si el numero cambia, recuerda actualizar script setup-hosts.sh con las IP's de los nuevos hosts en /etc/hosts de cada VM.
 NUM_MASTER_NODE = 1
 NUM_WORKER_NODE = 2
 
