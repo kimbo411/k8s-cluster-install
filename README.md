@@ -1,8 +1,9 @@
 # k8s-cluster-install
 
-Para la instalación del se necesita los datos de los siguientes campos
-
 Ejecutamo el vagrant.
+```
+vagrant up
+```
 
 Luego comenzamos la instalación en todos los nodos y master
 
@@ -111,9 +112,10 @@ apt-mark hold kubelet kubeadm kubectl
 kubeadm init --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=192.168.56.2
 ```
 
-Copiamos la salida: kubeadm join 192.168.56.2:6443 --token ud7vom.1v57cniocm6gtz8n --discovery-token-ca-cert-hash sha256:2abc2565242d24dfb1da4c3e0f91de44494fe99287cc19c59a1a5ae0dff19e97
+Copiamos la salida: kubeadm join 192.168.56.2:6443 --token ogdulm.uru61th3hhnygpxn \
+    --discovery-token-ca-cert-hash sha256:9c28adc5d340d32d4a327fe76db60be3f9ed8aab18d883ffdf4f7d25cbb2d4d5
 
-### Ahora nos realizamos logout para ser usuarios regulares en todos los nodos, para aislar los componentes de las tareas posteriores.
+### Ahora nos realizamos logout para ser usuarios regulares solo en master, para aislar los componentes de las tareas posteriores.
 ```
 logout
 ```
