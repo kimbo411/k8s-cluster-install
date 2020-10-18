@@ -2,4 +2,4 @@
 
 ### Vagrant ###
 .vagrant/
-.log
+*.log
