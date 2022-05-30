@@ -9,7 +9,23 @@ sed -e '/^.*ubuntu-bionic.*/d' -i /etc/hosts
 
 # Update /etc/hosts about other hosts
 cat >> /etc/hosts <<EOF
-192.168.5.11  master-1
-192.168.5.21  worker-1
-192.168.5.22  worker-2
+192.168.56.11  master01
+192.168.56.12  master02
+192.168.56.13  master03
+192.168.56.2  node01
 EOF
+
+echo "##############################################"
+echo "----- Alex Giancarlo Camacho Zegarra ------"
+echo "##############################################"
+
+echo "### Editando sshd_config ###"
+echo "•	 Editando /etc/ssh/sshd_config"
+sudo sed -i '/PermitRootLogin prohibit-password/c\PermitRootLogin yes' /etc/ssh/sshd_config
+sudo sed -i '/PasswordAuthentication no/c\PasswordAuthentication yes' /etc/ssh/sshd_config
+
+echo "•	 Riniciando servicio SSH"
+sudo systemctl restart sshd
+echo "•	 Actualizando OS"
+sudo apt update -y
+echo "---- Finalizado ----"

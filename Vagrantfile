@@ -3,12 +3,12 @@
 
 # Definición el número de master y worker nodes
 # Si el numero cambia, recuerda actualizar script setup-hosts.sh con las IP's de los nuevos hosts en /etc/hosts de cada VM.
-NUM_MASTER_NODE = 1
-NUM_WORKER_NODE = 2
+NUM_MASTER_NODE = 3
+NUM_WORKER_NODE = 1
 
 IP_NW = "192.168.56."
-MASTER_IP_START = 1
-NODE_IP_START = 2
+MASTER_IP_START = 10
+NODE_IP_START = 1
 LB_IP_START = 30
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
@@ -23,6 +23,8 @@ Vagrant.configure("2") do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
   # config.vm.box = "base"
+  # "ubuntu/focal64"
+  #"ubuntu/bionic64"
   config.vm.box = "ubuntu/bionic64"
 
   # Disable automatic box update checking. If you disable this, then
@@ -55,14 +57,14 @@ Vagrant.configure("2") do |config|
 
   # Provision Master Nodes
   (1..NUM_MASTER_NODE).each do |i|
-      config.vm.define "k8s-arq-master" do |node|
+      config.vm.define "k8s-master0#{i}" do |node|
         # Name shown in the GUI
         node.vm.provider "virtualbox" do |vb|
-            vb.name = "k8s-arq-master"
-            vb.memory = 2048
-            vb.cpus = 2
+            vb.name = "k8s-master0#{i}"
+            vb.memory = 3072
+            vb.cpus = 1
         end
-        node.vm.hostname = "k8s-arq-master"
+        node.vm.hostname = "k8s-master0#{i}"
         node.vm.network :private_network, ip: IP_NW + "#{MASTER_IP_START + i}"
         node.vm.network "forwarded_port", guest: 22, host: "#{2710 + i}"
 
@@ -78,13 +80,13 @@ Vagrant.configure("2") do |config|
 
   # Provision Worker Nodes
   (1..NUM_WORKER_NODE).each do |i|
-    config.vm.define "k8s-arq-node0#{i}" do |node|
+    config.vm.define "k8s-node0#{i}" do |node|
         node.vm.provider "virtualbox" do |vb|
-            vb.name = "k8s-arq-node0#{i}"
-            vb.memory = 2048
+            vb.name = "k8s-node0#{i}"
+            vb.memory = 3072
             vb.cpus = 2
         end
-        node.vm.hostname = "k8s-arq-node0#{i}"
+        node.vm.hostname = "k8s-node0#{i}"
         node.vm.network :private_network, ip: IP_NW + "#{NODE_IP_START + i}"
                 node.vm.network "forwarded_port", guest: 22, host: "#{2720 + i}"
 
