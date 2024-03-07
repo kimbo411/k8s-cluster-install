@@ -3,10 +3,10 @@
 
 # Definición el número de master y worker nodes
 # Si el numero cambia, recuerda actualizar script setup-hosts.sh con las IP's de los nuevos hosts en /etc/hosts de cada VM.
-NUM_MASTER_NODE = 3
-NUM_WORKER_NODE = 1
+NUM_MASTER_NODE = 1
+NUM_WORKER_NODE = 0
 
-IP_NW = "192.168.56."
+IP_NW = "192.168.18."
 MASTER_IP_START = 10
 NODE_IP_START = 1
 LB_IP_START = 30
@@ -24,8 +24,9 @@ Vagrant.configure("2") do |config|
   # boxes at https://vagrantcloud.com/search.
   # config.vm.box = "base"
   # "ubuntu/focal64"
-  #"ubuntu/bionic64"
-  config.vm.box = "ubuntu/bionic64"
+  # "ubuntu/bionic64"
+  # "generic/rhel9"
+  config.vm.box = "generic/ubuntu2204"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -56,17 +57,31 @@ Vagrant.configure("2") do |config|
   # information on available options.
 
   # Provision Master Nodes
+  ###### Interface red compartida NET1
+  config.vm.network "public_network", bridge: "#$default_network_interface", ip: "192.168.18.130", 
+  use_dhcp_assigned_default_route: true
+  ###### FIN Interface red compartida
   (1..NUM_MASTER_NODE).each do |i|
-      config.vm.define "k8s-master0#{i}" do |node|
+      config.vm.define "k8s-master#{i}" do |node|
         # Name shown in the GUI
         node.vm.provider "virtualbox" do |vb|
-            vb.name = "k8s-master0#{i}"
-            vb.memory = 3072
-            vb.cpus = 1
+            vb.name = "k8s-master#{i}"
+            vb.memory = 14025
+            vb.cpus = 4
+            ###### Agregar un disco duro adicional de 20GB
+            nuevo_disco_path = 'D:\Data\k8s-cluster-rook\rook_disk.vmdk'
+
+            if !File.exist?(nuevo_disco_path)
+                # Agregar un disco duro adicional de 20GB
+                vb.customize ['createhd', '--filename', nuevo_disco_path, '--size', '20480']
+            end
+            vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', '2', '--device', '0', '--type', 'hdd', '--medium', nuevo_disco_path]
+             ###### FIN Agregar un disco duro adicional de 20GB
         end
-        node.vm.hostname = "k8s-master0#{i}"
-        node.vm.network :private_network, ip: IP_NW + "#{MASTER_IP_START + i}"
-        node.vm.network "forwarded_port", guest: 22, host: "#{2710 + i}"
+        node.vm.hostname = "k8s-master#{i}"
+        # Descomentar en caso NET1 este comentado
+        #node.vm.network :private_network, ip: IP_NW + "#{MASTER_IP_START + i}"
+        #node.vm.network "forwarded_port", guest: 22, host: "#{2710 + i}"
 
         node.vm.provision "setup-hosts", :type => "shell", :path => "ubuntu/vagrant/setup-hosts.sh" do |s|
           s.args = ["enp0s8"]
@@ -83,8 +98,8 @@ Vagrant.configure("2") do |config|
     config.vm.define "k8s-node0#{i}" do |node|
         node.vm.provider "virtualbox" do |vb|
             vb.name = "k8s-node0#{i}"
-            vb.memory = 3072
-            vb.cpus = 2
+            vb.memory = 14025
+            vb.cpus = 4
         end
         node.vm.hostname = "k8s-node0#{i}"
         node.vm.network :private_network, ip: IP_NW + "#{NODE_IP_START + i}"
