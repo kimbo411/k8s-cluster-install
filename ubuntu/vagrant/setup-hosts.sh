@@ -8,12 +8,12 @@ sed -e "s/^.*${HOSTNAME}.*/${ADDRESS} ${HOSTNAME} ${HOSTNAME}.local/" -i /etc/ho
 sed -e '/^.*ubuntu-bionic.*/d' -i /etc/hosts
 
 # Update /etc/hosts about other hosts
-cat >> /etc/hosts <<EOF
-192.168.56.11  master01
-192.168.56.12  master02
-192.168.56.13  master03
-192.168.56.2  node01
-EOF
+#cat >> /etc/hosts <<EOF
+#192.168.56.11  master01
+#192.168.56.12  master02
+#192.168.56.13  master03
+#192.168.56.2  node01
+#EOF
 
 echo "##############################################"
 echo "----- Alex Giancarlo Camacho Zegarra ------"
@@ -26,6 +26,11 @@ sudo sed -i '/PasswordAuthentication no/c\PasswordAuthentication yes' /etc/ssh/s
 
 echo "•	 Riniciando servicio SSH"
 sudo systemctl restart sshd
+
+echo "### Habilitar timezone Lima y habilitar NTP Service ###"
+sudo timedatectl set-timezone America/Lima
+sudo timedatectl set-ntp on
+
 echo "•	 Actualizando OS"
 sudo apt update -y
 echo "---- Finalizado ----"
