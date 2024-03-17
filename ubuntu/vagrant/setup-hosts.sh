@@ -19,6 +19,9 @@ echo "##############################################"
 echo "----- Alex Giancarlo Camacho Zegarra ------"
 echo "##############################################"
 
+echo "•	 Actualizando OS"
+sudo apt update -y
+
 echo "### Editando sshd_config ###"
 echo "•	 Editando /etc/ssh/sshd_config"
 sudo sed -i '/PermitRootLogin prohibit-password/c\PermitRootLogin yes' /etc/ssh/sshd_config
@@ -31,6 +34,8 @@ echo "### Habilitar timezone Lima y habilitar NTP Service ###"
 sudo timedatectl set-timezone America/Lima
 sudo timedatectl set-ntp on
 
-echo "•	 Actualizando OS"
-sudo apt update -y
+echo "•	 Cambiar password root"
+echo "root:root" > /tmp/password.txt
+sudo chpasswd < /tmp/password.txt
+
 echo "---- Finalizado ----"
