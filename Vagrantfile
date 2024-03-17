@@ -58,8 +58,8 @@ Vagrant.configure("2") do |config|
 
   # Provision Master Nodes
   ###### Interface red compartida NET1
-  config.vm.network "public_network", bridge: "#$default_network_interface", ip: "192.168.18.130", 
-  use_dhcp_assigned_default_route: true
+  #config.vm.network "public_network", bridge: "#$default_network_interface", ip: "192.168.18.130", 
+  #use_dhcp_assigned_default_route: true
   ###### FIN Interface red compartida
   (1..NUM_MASTER_NODE).each do |i|
       config.vm.define "k8s-master#{i}" do |node|
@@ -82,7 +82,10 @@ Vagrant.configure("2") do |config|
         # Descomentar en caso NET1 este comentado
         #node.vm.network :private_network, ip: IP_NW + "#{MASTER_IP_START + i}"
         #node.vm.network "forwarded_port", guest: 22, host: "#{2710 + i}"
-
+        ###### Interface red compartida NET1
+        node.vm.network "public_network", bridge: "#$default_network_interface", ip: "192.168.18.13#{i}", 
+        use_dhcp_assigned_default_route: true
+        ###### FIN Interface red compartida
         node.vm.provision "setup-hosts", :type => "shell", :path => "ubuntu/vagrant/setup-hosts.sh" do |s|
           s.args = ["enp0s8"]
         end
